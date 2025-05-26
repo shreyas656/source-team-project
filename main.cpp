@@ -34,7 +34,7 @@ public:
 vector<Patient> patients;
 vector<Doctor> doctors;
 
-// --- Chinmai's Patient Age Validation ---
+// --- Chinami's Patient Age Validation ---
 bool isValidAge(int age) {
     return age > 0 && age < 120;
 }
@@ -117,7 +117,53 @@ void doctorSearchMenu() {
     searchDoctorBySpecialization(doctors, spec);
 }
 
-// --- Main menu ---
+// --- Prajwal's contribution: Discharge Summary ---
+string currentDate() {
+    // Static date placeholder; real code would get system date
+    return "2025-05-23";
+}
+
+void printDischargeSummary(const Patient& patient, double totalCost) {
+    cout << "\n----- Discharge Summary -----\n";
+    cout << "Patient Name: " << patient.name << "\n";
+    cout << "Patient ID: " << patient.id << "\n";
+    cout << "Diagnosis: " << patient.diagnosis << "\n";
+    cout << "Treatment Given: " << patient.treatment << "\n";
+    cout << "Total Cost: $" << totalCost << "\n";
+    cout << "Date of Discharge: " << currentDate() << "\n";
+    cout << "-----------------------------\n";
+}
+
+void dischargePatient() {
+    if (patients.empty()) {
+        cout << "No patients available for discharge.\n";
+        return;
+    }
+
+    int patientID;
+    cout << "Enter Patient ID to discharge: ";
+    cin >> patientID;
+    cin.ignore();
+
+    for (auto it = patients.begin(); it != patients.end(); ++it) {
+        if (it->id == patientID) {
+            double totalCost;
+            cout << "Enter total treatment cost: $";
+            cin >> totalCost;
+            cin.ignore();
+
+            printDischargeSummary(*it, totalCost);
+
+            patients.erase(it);
+            cout << "Patient discharged successfully.\n";
+            return;
+        }
+    }
+
+    cout << "Patient with ID " << patientID << " not found.\n";
+}
+
+// --- Main Menu ---
 void mainMenu() {
     int choice;
     while (true) {
@@ -127,7 +173,8 @@ void mainMenu() {
         cout << "3. Add Doctor\n";
         cout << "4. Display Doctors\n";
         cout << "5. Search Doctor by Specialization\n";
-        cout << "6. Exit\n";
+        cout << "6. Discharge Patient\n";
+        cout << "7. Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
         cin.ignore();
@@ -138,7 +185,8 @@ void mainMenu() {
             case 3: addDoctor(); break;
             case 4: displayDoctors(); break;
             case 5: doctorSearchMenu(); break;
-            case 6: cout << "Exiting...\n"; return;
+            case 6: dischargePatient(); break;
+            case 7: cout << "Exiting...\n"; return;
             default: cout << "Invalid choice, try again.\n"; break;
         }
     }
