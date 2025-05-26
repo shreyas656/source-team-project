@@ -5,6 +5,8 @@
 
 using namespace std;
 
+// ------------------ Data Classes ------------------
+
 class Patient {
 public:
     int id;
@@ -14,8 +16,10 @@ public:
     string treatment;
 
     void display() const {
-        cout << "Patient ID: " << id << ", Name: " << name << ", Age: " << age
-             << "\nDiagnosis: " << diagnosis << "\nTreatment: " << treatment << "\n";
+        cout << "Patient ID: " << id
+             << ", Name: " << name
+             << ", Age: " << age << "\nDiagnosis: " << diagnosis
+             << "\nTreatment: " << treatment << "\n";
     }
 };
 
@@ -26,15 +30,30 @@ public:
     string specialization;
 
     void display() const {
-        cout << "Doctor ID: " << id << ", Name: " << name
+        cout << "Doctor ID: " << id
+             << ", Name: " << name
              << ", Specialization: " << specialization << "\n";
     }
 };
 
+class Medicine {
+public:
+    string name;
+    int stock;
+
+    void display() const {
+        cout << "Medicine: " << name << ", Stock: " << stock << "\n";
+    }
+};
+
+// ------------------ Global Vectors ------------------
+
 vector<Patient> patients;
 vector<Doctor> doctors;
+vector<Medicine> medicines;
 
-// --- Chinami's Patient Age Validation ---
+// ------------------ Chinami's Patient Age Validation ------------------
+
 bool isValidAge(int age) {
     return age > 0 && age < 120;
 }
@@ -68,12 +87,17 @@ void addPatient() {
 
 void displayPatients() {
     cout << "\nList of Patients:\n";
+    if (patients.empty()) {
+        cout << "No patients available.\n";
+        return;
+    }
     for (const auto& p : patients) {
         p.display();
     }
 }
 
-// --- Suhas's contribution: Add and search doctors ---
+// ------------------ Suhas's Doctor Handling ------------------
+
 void addDoctor() {
     Doctor d;
     cout << "Enter doctor ID: ";
@@ -92,12 +116,16 @@ void addDoctor() {
 
 void displayDoctors() {
     cout << "\nList of Doctors:\n";
+    if (doctors.empty()) {
+        cout << "No doctors available.\n";
+        return;
+    }
     for (const auto& d : doctors) {
         d.display();
     }
 }
 
-void searchDoctorBySpecialization(const vector<Doctor>& doctors, const string& specialization) {
+void searchDoctorBySpecialization(const string& specialization) {
     bool found = false;
     for (const auto& doc : doctors) {
         if (doc.specialization == specialization) {
@@ -114,13 +142,13 @@ void doctorSearchMenu() {
     cout << "Enter specialization to search doctor: ";
     string spec;
     getline(cin, spec);
-    searchDoctorBySpecialization(doctors, spec);
+    searchDoctorBySpecialization(spec);
 }
 
-// --- Prajwal's contribution: Discharge Summary ---
+// ------------------ Prajwal's Discharge Summary ------------------
+
 string currentDate() {
-    // Static date placeholder; real code would get system date
-    return "2025-05-23";
+    return "2025-05-23"; // Placeholder date
 }
 
 void printDischargeSummary(const Patient& patient, double totalCost) {
@@ -163,18 +191,47 @@ void dischargePatient() {
     cout << "Patient with ID " << patientID << " not found.\n";
 }
 
-// --- Main Menu ---
+// ------------------ Sudhrashan's Medicine Stock ------------------
+
+void addMedicine() {
+    Medicine m;
+    cout << "Enter medicine name: ";
+    getline(cin, m.name);
+    cout << "Enter medicine stock quantity: ";
+    cin >> m.stock;
+    cin.ignore();
+
+    medicines.push_back(m);
+    cout << "Medicine added successfully.\n";
+}
+
+void checkMedicineStock() {
+    if (medicines.empty()) {
+        cout << "No medicine stock available.\n";
+        return;
+    }
+
+    cout << "Current Medicine Stock:\n";
+    for (const auto& med : medicines) {
+        med.display();
+    }
+}
+
+// ------------------ Main Menu ------------------
+
 void mainMenu() {
     int choice;
     while (true) {
-        cout << "\nHospital Management System Menu:\n";
+        cout << "\n--- Hospital Management System Menu ---\n";
         cout << "1. Add Patient\n";
         cout << "2. Display Patients\n";
         cout << "3. Add Doctor\n";
         cout << "4. Display Doctors\n";
         cout << "5. Search Doctor by Specialization\n";
         cout << "6. Discharge Patient\n";
-        cout << "7. Exit\n";
+        cout << "7. Add Medicine Stock\n";
+        cout << "8. Check Medicine Stock\n";
+        cout << "9. Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
         cin.ignore();
@@ -186,14 +243,18 @@ void mainMenu() {
             case 4: displayDoctors(); break;
             case 5: doctorSearchMenu(); break;
             case 6: dischargePatient(); break;
-            case 7: cout << "Exiting...\n"; return;
-            default: cout << "Invalid choice, try again.\n"; break;
+            case 7: addMedicine(); break;
+            case 8: checkMedicineStock(); break;
+            case 9: cout << "Exiting...\n"; return;
+            default: cout << "Invalid choice. Please try again.\n"; break;
         }
     }
 }
 
+// ------------------ Entry Point ------------------
+
 int main() {
-    cout << "Welcome to Hospital Management System\n";
+    cout << "Welcome to the Hospital Management System\n";
     mainMenu();
     return 0;
 }
