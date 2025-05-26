@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+
 using namespace std;
 
 class Patient {
@@ -13,7 +14,8 @@ public:
     string treatment;
 
     void display() const {
-        cout << "Patient ID: " << id << ", Name: " << name << ", Age: " << age << "\nDiagnosis: " << diagnosis << "\nTreatment: " << treatment << "\n";
+        cout << "Patient ID: " << id << ", Name: " << name << ", Age: " << age
+             << "\nDiagnosis: " << diagnosis << "\nTreatment: " << treatment << "\n";
     }
 };
 
@@ -24,15 +26,15 @@ public:
     string specialization;
 
     void display() const {
-        cout << "Doctor ID: " << id << ", Name: " << name << ", Specialization: " << specialization << "\n";
+        cout << "Doctor ID: " << id << ", Name: " << name
+             << ", Specialization: " << specialization << "\n";
     }
 };
 
 vector<Patient> patients;
 vector<Doctor> doctors;
 
-// --- Chinami's Patient Age Validation ---
-
+// --- Chinmai's Patient Age Validation ---
 bool isValidAge(int age) {
     return age > 0 && age < 120;
 }
@@ -64,8 +66,14 @@ void addPatient() {
     cout << "Patient added successfully.\n";
 }
 
-// --- Suhas's contribution: Search doctor by specialization ---
+void displayPatients() {
+    cout << "\nList of Patients:\n";
+    for (const auto& p : patients) {
+        p.display();
+    }
+}
 
+// --- Suhas's contribution: Add and search doctors ---
 void addDoctor() {
     Doctor d;
     cout << "Enter doctor ID: ";
@@ -80,6 +88,13 @@ void addDoctor() {
 
     doctors.push_back(d);
     cout << "Doctor added successfully.\n";
+}
+
+void displayDoctors() {
+    cout << "\nList of Doctors:\n";
+    for (const auto& d : doctors) {
+        d.display();
+    }
 }
 
 void searchDoctorBySpecialization(const vector<Doctor>& doctors, const string& specialization) {
@@ -102,26 +117,7 @@ void doctorSearchMenu() {
     searchDoctorBySpecialization(doctors, spec);
 }
 
-// --- Display all patients ---
-
-void displayPatients() {
-    cout << "\nList of Patients:\n";
-    for (const auto& p : patients) {
-        p.display();
-    }
-}
-
-// --- Display all doctors ---
-
-void displayDoctors() {
-    cout << "\nList of Doctors:\n";
-    for (const auto& d : doctors) {
-        d.display();
-    }
-}
-
-// --- Main menu including new options ---
-
+// --- Main menu ---
 void mainMenu() {
     int choice;
     while (true) {
