@@ -1,10 +1,7 @@
-//  Hospital Management System 
-
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <string>
-#include <iomanip>
+#include <algorithm>
 using namespace std;
 
 class Patient {
@@ -12,136 +9,147 @@ public:
     int id;
     string name;
     int age;
-    string disease;
-
-    void input() {
-        cout << "Enter Patient ID: ";
-        cin >> id;
-        cout << "Enter Name: ";
-        cin.ignore();
-        getline(cin, name);
-        cout << "Enter Age: ";
-        cin >> age;
-        cout << "Enter Disease: ";
-        cin.ignore();
-        getline(cin, disease);
-    }
+    string diagnosis;
+    string treatment;
 
     void display() const {
-        cout << left << setw(10) << id << setw(20) << name << setw(10) << age << setw(20) << disease << endl;
+        cout << "Patient ID: " << id << ", Name: " << name << ", Age: " << age << "\nDiagnosis: " << diagnosis << "\nTreatment: " << treatment << "\n";
     }
 };
 
-class Hospital {
-private:
-    vector<Patient> patients;
-    const string filename = "patients.dat";
-
-    void loadFromFile() {
-        ifstream fin(filename);
-        Patient p;
-        while (fin >> p.id) {
-            fin.ignore();
-            getline(fin, p.name);
-            fin >> p.age;
-            fin.ignore();
-            getline(fin, p.disease);
-            patients.push_back(p);
-        }
-        fin.close();
-    }
-
-    void saveToFile() {
-        ofstream fout(filename);
-        for (const auto& p : patients) {
-            fout << p.id << endl
-                 << p.name << endl
-                 << p.age << endl
-                 << p.disease << endl;
-        }
-        fout.close();
-    }
-
+class Doctor {
 public:
-    Hospital() { loadFromFile(); }
-    ~Hospital() { saveToFile(); }
+    int id;
+    string name;
+    string specialization;
 
-    void addPatient() {
-        Patient p;
-        p.input();
-        patients.push_back(p);
-        cout << "Patient added successfully!\n";
-    }
-
-    void viewPatients() {
-        cout << left << setw(10) << "ID" << setw(20) << "Name" << setw(10) << "Age" << setw(20) << "Disease" << endl;
-        for (const auto& p : patients)
-            p.display();
-    }
-
-    void searchPatient() {
-        int id;
-        cout << "Enter ID to search: ";
-        cin >> id;
-        bool found = false;
-        for (const auto& p : patients) {
-            if (p.id == id) {
-                p.display();
-                found = true;
-                break;
-            }
-        }
-        if (!found) cout << "Patient not found.\n";
-    }
-
-    void deletePatient() {
-        int id;
-        cout << "Enter ID to delete: ";
-        cin >> id;
-        bool found = false;
-        for (auto it = patients.begin(); it != patients.end(); ++it) {
-            if (it->id == id) {
-                patients.erase(it);
-                cout << "Patient deleted.\n";
-                found = true;
-                break;
-            }
-        }
-        if (!found) cout << "Patient not found.\n";
+    void display() const {
+        cout << "Doctor ID: " << id << ", Name: " << name << ", Specialization: " << specialization << "\n";
     }
 };
+
+vector<Patient> patients;
+vector<Doctor> doctors;
+
+// --- Chinami's Patient Age Validation ---
+
+bool isValidAge(int age) {
+    return age > 0 && age < 120;
+}
+
+void addPatient() {
+    Patient p;
+    cout << "Enter patient ID: ";
+    cin >> p.id;
+    cin.ignore();
+
+    cout << "Enter patient name: ";
+    getline(cin, p.name);
+
+    while (true) {
+        cout << "Enter patient age: ";
+        cin >> p.age;
+        if (isValidAge(p.age)) break;
+        cout << "Invalid age entered. Please enter age between 1 and 119.\n";
+    }
+    cin.ignore();
+
+    cout << "Enter diagnosis: ";
+    getline(cin, p.diagnosis);
+
+    cout << "Enter treatment: ";
+    getline(cin, p.treatment);
+
+    patients.push_back(p);
+    cout << "Patient added successfully.\n";
+}
+
+// --- Suhas's contribution: Search doctor by specialization ---
+
+void addDoctor() {
+    Doctor d;
+    cout << "Enter doctor ID: ";
+    cin >> d.id;
+    cin.ignore();
+
+    cout << "Enter doctor name: ";
+    getline(cin, d.name);
+
+    cout << "Enter specialization: ";
+    getline(cin, d.specialization);
+
+    doctors.push_back(d);
+    cout << "Doctor added successfully.\n";
+}
+
+void searchDoctorBySpecialization(const vector<Doctor>& doctors, const string& specialization) {
+    bool found = false;
+    for (const auto& doc : doctors) {
+        if (doc.specialization == specialization) {
+            doc.display();
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "No doctors found with specialization: " << specialization << endl;
+    }
+}
+
+void doctorSearchMenu() {
+    cout << "Enter specialization to search doctor: ";
+    string spec;
+    getline(cin, spec);
+    searchDoctorBySpecialization(doctors, spec);
+}
+
+// --- Display all patients ---
+
+void displayPatients() {
+    cout << "\nList of Patients:\n";
+    for (const auto& p : patients) {
+        p.display();
+    }
+}
+
+// --- Display all doctors ---
+
+void displayDoctors() {
+    cout << "\nList of Doctors:\n";
+    for (const auto& d : doctors) {
+        d.display();
+    }
+}
+
+// --- Main menu including new options ---
+
+void mainMenu() {
+    int choice;
+    while (true) {
+        cout << "\nHospital Management System Menu:\n";
+        cout << "1. Add Patient\n";
+        cout << "2. Display Patients\n";
+        cout << "3. Add Doctor\n";
+        cout << "4. Display Doctors\n";
+        cout << "5. Search Doctor by Specialization\n";
+        cout << "6. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1: addPatient(); break;
+            case 2: displayPatients(); break;
+            case 3: addDoctor(); break;
+            case 4: displayDoctors(); break;
+            case 5: doctorSearchMenu(); break;
+            case 6: cout << "Exiting...\n"; return;
+            default: cout << "Invalid choice, try again.\n"; break;
+        }
+    }
+}
 
 int main() {
-    Hospital h;
-    int choice;
-    do {
-        cout << "\n--- Hospital Management Menu ---\n";
-        cout << "1. Add Patient\n";
-        cout << "2. View All Patients\n";
-        cout << "3. Search Patient\n";
-        cout << "4. Delete Patient\n";
-        cout << "0. Exit\n";
-        cout << "Enter your choice: ";
-        cin >> choice;
-	switch (choice) {
-        case 1:
-            h.addPatient();
-            break;
-        case 2:
-            h.viewPatients();
-            break;
-        case 3:
-            h.searchPatient();
-            break;
-        case 4:
-            h.deletePatient();
-            break;
-        case 0:
-            cout << "Exiting...\n";
-            break;
-        default:
-            cout << "Invalid choice.\n";
-        }
-    } while (choice != 0);
+    cout << "Welcome to Hospital Management System\n";
+    mainMenu();
     return 0;
 }
